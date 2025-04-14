@@ -62,4 +62,4 @@ This project is an RAG (Retrieval-Augmented Generation) based chatbot system des
     ```bash
     streamlit run streamlit_chatbot.py
     ```
-3.  Access the Streamlit app via your web browser (https://govfundingchatbot-4c5stayhsurtwrvvtfeqwk.streamlit.app/) to use the chatbot.
+3.  Access the Streamlit app via your web browser (typically at `http://localhost:8501`) to use the chatbot.
