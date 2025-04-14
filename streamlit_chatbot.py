@@ -15,7 +15,7 @@ from langchain_qdrant import QdrantVectorStore
 
 load_dotenv()
 
-# API 키와 엔드포인트 가져오기
+# Get API keys and endpoints
 try:
     openai_key = os.getenv("OPENAI_API_KEY", "")
     qdrant_url = os.getenv("QDRANT_URL", "")
@@ -241,3 +241,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
