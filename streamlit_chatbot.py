@@ -185,7 +185,7 @@ def main():
                         source_docs = retriever.invoke(query)
                     
                     st.session_state.messages.append({"role": "assistant", "content": answer})
-                    st.experimental_rerun()
+                    st.rerun()
     
     # Display chat messages
     for msg in st.session_state.messages:
@@ -237,7 +237,7 @@ def main():
             source_docs = retriever.invoke(user_input)
         
         st.session_state.messages.append({"role": "assistant", "content": answer})
-        st.experimental_rerun()
+        st.rerun()
 
 if __name__ == "__main__":
     main()
