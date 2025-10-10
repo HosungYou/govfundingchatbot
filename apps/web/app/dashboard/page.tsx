@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import ChatHistory from '@/components/ChatHistory'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -97,7 +98,18 @@ export default async function Dashboard() {
 
         {/* Page Title */}
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-neutral-900 mb-2">Recent Opportunities</h1>
+          <h1 className="text-3xl font-bold text-neutral-900 mb-2">Dashboard</h1>
+          <p className="text-neutral-600">Your personalized funding discovery hub</p>
+        </div>
+
+        {/* Chat History Section */}
+        <div className="mb-8">
+          <ChatHistory />
+        </div>
+
+        {/* Recent Opportunities Title */}
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-neutral-900 mb-2">Recent Opportunities</h2>
           <p className="text-neutral-600">Latest federal funding opportunities from NSF and Grants.gov</p>
         </div>
 
