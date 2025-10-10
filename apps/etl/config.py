@@ -38,10 +38,13 @@ class Settings(BaseSettings):
 
     # Vector store
     pinecone_api_key: Optional[str] = None
-    pinecone_index: str = Field(default="govfunding-opportunities")
-    pinecone_region: str = Field(default="us-east-1")
+    pinecone_index: str = Field(default="my-grants-index")
+    pinecone_environment: str = Field(default="us-east-1")
 
     chroma_persist_dir: Path = Field(default=Path("chroma_storage"))
+
+    # OpenAI
+    openai_api_key: Optional[str] = None
 
     # Logging/telemetry
     log_level: str = Field(default="INFO")

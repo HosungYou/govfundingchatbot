@@ -14,6 +14,7 @@ from apps.etl.transformers.opportunities import OpportunityTransformer
 from apps.etl.transformers.awards import AwardTransformer
 from apps.etl.writers.local import LocalWriter
 from apps.etl.writers.supabase import SupabaseWriter
+from apps.etl.embeddings.opportunity_embedder import OpportunityEmbedder
 
 logger = logging.getLogger(__name__)
 
@@ -51,6 +52,8 @@ def run_pipeline(run_date: Optional[datetime] = None, *, settings: Optional[Sett
         # Load - Write to Supabase if configured
         opp_stats = {}
         award_stats = {}
+        embed_stats = {}
+
         if settings.database_url and settings.supabase_service_key:
             logger.info("Writing to Supabase")
             supabase_writer = SupabaseWriter(settings=settings)
@@ -60,6 +63,14 @@ def run_pipeline(run_date: Optional[datetime] = None, *, settings: Optional[Sett
         else:
             logger.warning("Supabase not configured, skipping database write")
 
+        # Generate and store embeddings in Pinecone
+        if settings.pinecone_api_key and settings.openai_api_key:
+            logger.info("Generating and storing embeddings")
+            embedder = OpportunityEmbedder(settings=settings)
+            embed_stats = embedder.embed_batch(list(opportunities_normalized))
+        else:
+            logger.warning("Pinecone or OpenAI not configured, skipping embeddings")
+
         logger.info(
             "ETL run completed successfully",
             extra={
@@ -67,6 +78,7 @@ def run_pipeline(run_date: Optional[datetime] = None, *, settings: Optional[Sett
                 "opportunities_count": len(opportunities_normalized),
                 "supabase_opp_stats": opp_stats,
                 "supabase_award_stats": award_stats,
+                "embedding_stats": embed_stats,
             },
         )
 

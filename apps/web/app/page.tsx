@@ -1,4 +1,35 @@
-export default function Home() {
+import { createClient } from '@supabase/supabase-js'
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
+
+export default async function Home() {
+  // Fetch real-time metrics from Supabase
+  const { count: totalOpportunities } = await supabase
+    .from('funding_opportunities')
+    .select('*', { count: 'exact', head: true })
+    .eq('deadline_status', 'open')
+
+  const { data: fundingData } = await supabase
+    .from('funding_opportunities')
+    .select('award_ceiling')
+    .eq('deadline_status', 'open')
+
+  const totalFunding = fundingData?.reduce((sum, opp) => sum + (opp.award_ceiling || 0), 0) || 0
+
+  // Get recent opportunities for preview
+  const { data: recentOpportunities } = await supabase
+    .from('funding_opportunities')
+    .select('opportunity_id, title, agency_name, award_floor, award_ceiling, close_date')
+    .eq('deadline_status', 'open')
+    .order('post_date', { ascending: false })
+    .limit(3)
+
+  const activeCount = totalOpportunities || 0
+  const fundingAmount = totalFunding ? (totalFunding / 1e9).toFixed(1) : '0.0'
+
   return (
     <div className="min-h-screen bg-neutral-50">
       {/* Header - Enhanced */}
@@ -15,9 +46,11 @@ export default function Home() {
           </nav>
           <div className="flex items-center gap-4">
             <button className="text-neutral-700 hover:text-primary-600 transition font-medium">Sign In</button>
-            <button className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition shadow-sm">
-              Get Started
-            </button>
+            <a href="/dashboard">
+              <button className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition shadow-sm">
+                Get Started
+              </button>
+            </a>
           </div>
         </div>
       </header>
@@ -29,7 +62,7 @@ export default function Home() {
             {/* Left: Hero Content */}
             <div>
               <div className="inline-block px-4 py-2 bg-primary-100 text-primary-700 rounded-full text-sm font-medium mb-6">
-                🚀 Now tracking 1,247 active opportunities
+                🚀 Now tracking {activeCount.toLocaleString()} active opportunities
               </div>
               <h1 className="text-5xl lg:text-6xl font-bold text-neutral-900 leading-tight">
                 Find Federal Funding{' '}
@@ -42,9 +75,11 @@ export default function Home() {
                 Get alerts for opportunities matching your research.
               </p>
               <div className="mt-8 flex flex-col sm:flex-row gap-4">
-                <button className="px-8 py-4 bg-primary-500 text-white rounded-lg hover:bg-primary-600 text-lg font-semibold shadow-lg hover:shadow-xl transition transform hover:-translate-y-0.5">
-                  Try Dashboard →
-                </button>
+                <a href="/dashboard">
+                  <button className="px-8 py-4 bg-primary-500 text-white rounded-lg hover:bg-primary-600 text-lg font-semibold shadow-lg hover:shadow-xl transition transform hover:-translate-y-0.5">
+                    Try Dashboard →
+                  </button>
+                </a>
                 <button className="px-8 py-4 border-2 border-primary-500 text-primary-600 rounded-lg hover:bg-primary-50 text-lg font-semibold transition">
                   Watch Demo
                 </button>
@@ -68,16 +103,36 @@ export default function Home() {
                   <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full">Live</span>
                 </div>
                 <div className="space-y-3 mt-4">
-                  {[1, 2, 3].map((i) => (
-                    <div key={i} className="p-4 bg-neutral-50 rounded-lg hover:border-primary-300 border border-neutral-200 transition cursor-pointer">
-                      <div className="flex justify-between mb-2">
-                        <span className="text-xs font-semibold text-primary-600">NSF</span>
-                        <span className="text-xs text-neutral-500">12 days</span>
-                      </div>
-                      <h4 className="font-medium text-sm mb-1">AISL Program</h4>
-                      <p className="text-xs text-neutral-500">$50K - $500K</p>
+                  {recentOpportunities && recentOpportunities.length > 0 ? (
+                    recentOpportunities.map((opp) => (
+                      <a
+                        key={opp.opportunity_id}
+                        href={`/opportunities/${opp.opportunity_id}`}
+                        className="block p-4 bg-neutral-50 rounded-lg hover:border-primary-300 border border-neutral-200 transition cursor-pointer"
+                      >
+                        <div className="flex justify-between mb-2">
+                          <span className="text-xs font-semibold text-primary-600">{opp.agency_name}</span>
+                          <span className="text-xs text-neutral-500">
+                            {opp.close_date
+                              ? `${Math.ceil((new Date(opp.close_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} days`
+                              : 'No deadline'}
+                          </span>
+                        </div>
+                        <h4 className="font-medium text-sm mb-1 line-clamp-1">{opp.title}</h4>
+                        <p className="text-xs text-neutral-500">
+                          {opp.award_floor && opp.award_ceiling
+                            ? `$${(opp.award_floor / 1000).toFixed(0)}K - $${(opp.award_ceiling / 1000).toFixed(0)}K`
+                            : opp.award_ceiling
+                            ? `Up to $${(opp.award_ceiling / 1000).toFixed(0)}K`
+                            : 'Amount TBD'}
+                        </p>
+                      </a>
+                    ))
+                  ) : (
+                    <div className="p-4 text-center text-neutral-500 text-sm">
+                      No opportunities yet. Run ETL pipeline to populate database.
                     </div>
-                  ))}
+                  )}
                 </div>
               </div>
             </div>
@@ -90,14 +145,16 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="text-center">
-              <div className="text-4xl font-bold bg-gradient-to-r from-primary-500 to-primary-700 bg-clip-text text-transparent">1,247</div>
+              <div className="text-4xl font-bold bg-gradient-to-r from-primary-500 to-primary-700 bg-clip-text text-transparent">
+                {activeCount.toLocaleString()}
+              </div>
               <div className="mt-2 text-neutral-600 font-medium">Active Opportunities</div>
               <div className="mt-1 flex items-center justify-center gap-1 text-sm text-green-600">
-                <span>↑ 34 new this week</span>
+                <span>↑ Updated daily</span>
               </div>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold bg-gradient-to-r from-primary-500 to-primary-700 bg-clip-text text-transparent">$12.4B</div>
+              <div className="text-4xl font-bold bg-gradient-to-r from-primary-500 to-primary-700 bg-clip-text text-transparent">${fundingAmount}B</div>
               <div className="mt-2 text-neutral-600 font-medium">Available Funding</div>
             </div>
             <div className="text-center">
