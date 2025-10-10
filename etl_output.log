@@ -1,0 +1,81 @@
+2025-10-10 14:35:56,721 - apps.etl.pipeline - INFO - Starting ETL run
+2025-10-10 14:35:56,721 - apps.etl.pipeline - INFO - Extracting data from sources
+2025-10-10 14:35:56,721 - apps.etl.sources.nsf_awards - INFO - Fetching NSF awards
+2025-10-10 14:35:56,816 - httpx - INFO - HTTP Request: GET https://api.nsf.gov/services/v1/awards.json?dateStart=12%2F16%2F2023&dateEnd=01%2F15%2F2024&printFields=id%2Ctitle%2CpiFirstName%2CpiLastName%2CstartDate%2CexpDate%2CawardAmount%2CabstractText%2CawardeeName%2Cagency%2CdirCode%2CdivisionDirectorate%2CprogramElementCode "HTTP/1.0 301 Moved Permanently"
+2025-10-10 14:35:56,888 - httpx - INFO - HTTP Request: GET https://www.research.gov/awardapi-service/v1/awards.json?dateStart=12%2F16%2F2023&dateEnd=01%2F15%2F2024&printFields=id%2Ctitle%2CpiFirstName%2CpiLastName%2CstartDate%2CexpDate%2CawardAmount%2CabstractText%2CawardeeName%2Cagency%2CdirCode%2CdivisionDirectorate%2CprogramElementCode "HTTP/1.1 400 "
+2025-10-10 14:35:58,894 - apps.etl.sources.nsf_awards - INFO - Fetching NSF awards
+2025-10-10 14:35:58,959 - httpx - INFO - HTTP Request: GET https://api.nsf.gov/services/v1/awards.json?dateStart=12%2F16%2F2023&dateEnd=01%2F15%2F2024&printFields=id%2Ctitle%2CpiFirstName%2CpiLastName%2CstartDate%2CexpDate%2CawardAmount%2CabstractText%2CawardeeName%2Cagency%2CdirCode%2CdivisionDirectorate%2CprogramElementCode "HTTP/1.0 301 Moved Permanently"
+2025-10-10 14:35:59,032 - httpx - INFO - HTTP Request: GET https://www.research.gov/awardapi-service/v1/awards.json?dateStart=12%2F16%2F2023&dateEnd=01%2F15%2F2024&printFields=id%2Ctitle%2CpiFirstName%2CpiLastName%2CstartDate%2CexpDate%2CawardAmount%2CabstractText%2CawardeeName%2Cagency%2CdirCode%2CdivisionDirectorate%2CprogramElementCode "HTTP/1.1 400 "
+2025-10-10 14:36:01,036 - apps.etl.sources.nsf_awards - INFO - Fetching NSF awards
+2025-10-10 14:36:01,118 - httpx - INFO - HTTP Request: GET https://api.nsf.gov/services/v1/awards.json?dateStart=12%2F16%2F2023&dateEnd=01%2F15%2F2024&printFields=id%2Ctitle%2CpiFirstName%2CpiLastName%2CstartDate%2CexpDate%2CawardAmount%2CabstractText%2CawardeeName%2Cagency%2CdirCode%2CdivisionDirectorate%2CprogramElementCode "HTTP/1.0 301 Moved Permanently"
+2025-10-10 14:36:01,217 - httpx - INFO - HTTP Request: GET https://www.research.gov/awardapi-service/v1/awards.json?dateStart=12%2F16%2F2023&dateEnd=01%2F15%2F2024&printFields=id%2Ctitle%2CpiFirstName%2CpiLastName%2CstartDate%2CexpDate%2CawardAmount%2CabstractText%2CawardeeName%2Cagency%2CdirCode%2CdivisionDirectorate%2CprogramElementCode "HTTP/1.1 400 "
+2025-10-10 14:36:01,218 - apps.etl.pipeline - ERROR - ETL run failed
+Traceback (most recent call last):
+  File "/Volumes/External SSD/Projects/NSF Funding Data Retrival/apps/etl/pipeline.py", line 38, in run_pipeline
+    awards_raw = awards_extractor.fetch(window_start=window_start, window_end=run_date)
+  File "/Users/hosung/Library/Python/3.9/lib/python/site-packages/tenacity/__init__.py", line 338, in wrapped_f
+    return copy(f, *args, **kw)
+  File "/Users/hosung/Library/Python/3.9/lib/python/site-packages/tenacity/__init__.py", line 477, in __call__
+    do = self.iter(retry_state=retry_state)
+  File "/Users/hosung/Library/Python/3.9/lib/python/site-packages/tenacity/__init__.py", line 378, in iter
+    result = action(retry_state)
+  File "/Users/hosung/Library/Python/3.9/lib/python/site-packages/tenacity/__init__.py", line 420, in exc_check
+    raise retry_exc.reraise()
+  File "/Users/hosung/Library/Python/3.9/lib/python/site-packages/tenacity/__init__.py", line 187, in reraise
+    raise self.last_attempt.result()
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/_base.py", line 438, in result
+    return self.__get_result()
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/_base.py", line 390, in __get_result
+    raise self._exception
+  File "/Users/hosung/Library/Python/3.9/lib/python/site-packages/tenacity/__init__.py", line 480, in __call__
+    result = fn(*args, **kwargs)
+  File "/Volumes/External SSD/Projects/NSF Funding Data Retrival/apps/etl/sources/nsf_awards.py", line 50, in fetch
+    response.raise_for_status()
+  File "/Users/hosung/Library/Python/3.9/lib/python/site-packages/httpx/_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Client error '400 ' for url 'https://www.research.gov/awardapi-service/v1/awards.json?dateStart=12%2F16%2F2023&dateEnd=01%2F15%2F2024&printFields=id%2Ctitle%2CpiFirstName%2CpiLastName%2CstartDate%2CexpDate%2CawardAmount%2CabstractText%2CawardeeName%2Cagency%2CdirCode%2CdivisionDirectorate%2CprogramElementCode'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400
+================================================================================
+Running ETL pipeline with test date: 2024-01-15 00:00:00
+================================================================================
+
+Settings loaded:
+  - NSF Awards API: https://api.nsf.gov/services/v1/awards.json
+  - Window days: 30
+  - Grants XML URL: https://www.grants.gov/grantsws/rest/opportunity/details
+  - Local data dir: data
+  - Database URL: ✗ Not configured
+  - Supabase key: ✗ Not configured
+
+
+================================================================================
+✗ ETL pipeline failed: Client error '400 ' for url 'https://www.research.gov/awardapi-service/v1/awards.json?dateStart=12%2F16%2F2023&dateEnd=01%2F15%2F2024&printFields=id%2Ctitle%2CpiFirstName%2CpiLastName%2CstartDate%2CexpDate%2CawardAmount%2CabstractText%2CawardeeName%2Cagency%2CdirCode%2CdivisionDirectorate%2CprogramElementCode'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400
+================================================================================
+Traceback (most recent call last):
+  File "/Volumes/External SSD/Projects/NSF Funding Data Retrival/apps/etl/run_etl_test.py", line 36, in <module>
+    run_pipeline(run_date=test_date, settings=settings)
+  File "/Volumes/External SSD/Projects/NSF Funding Data Retrival/apps/etl/pipeline.py", line 38, in run_pipeline
+    awards_raw = awards_extractor.fetch(window_start=window_start, window_end=run_date)
+  File "/Users/hosung/Library/Python/3.9/lib/python/site-packages/tenacity/__init__.py", line 338, in wrapped_f
+    return copy(f, *args, **kw)
+  File "/Users/hosung/Library/Python/3.9/lib/python/site-packages/tenacity/__init__.py", line 477, in __call__
+    do = self.iter(retry_state=retry_state)
+  File "/Users/hosung/Library/Python/3.9/lib/python/site-packages/tenacity/__init__.py", line 378, in iter
+    result = action(retry_state)
+  File "/Users/hosung/Library/Python/3.9/lib/python/site-packages/tenacity/__init__.py", line 420, in exc_check
+    raise retry_exc.reraise()
+  File "/Users/hosung/Library/Python/3.9/lib/python/site-packages/tenacity/__init__.py", line 187, in reraise
+    raise self.last_attempt.result()
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/_base.py", line 438, in result
+    return self.__get_result()
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/_base.py", line 390, in __get_result
+    raise self._exception
+  File "/Users/hosung/Library/Python/3.9/lib/python/site-packages/tenacity/__init__.py", line 480, in __call__
+    result = fn(*args, **kwargs)
+  File "/Volumes/External SSD/Projects/NSF Funding Data Retrival/apps/etl/sources/nsf_awards.py", line 50, in fetch
+    response.raise_for_status()
+  File "/Users/hosung/Library/Python/3.9/lib/python/site-packages/httpx/_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Client error '400 ' for url 'https://www.research.gov/awardapi-service/v1/awards.json?dateStart=12%2F16%2F2023&dateEnd=01%2F15%2F2024&printFields=id%2Ctitle%2CpiFirstName%2CpiLastName%2CstartDate%2CexpDate%2CawardAmount%2CabstractText%2CawardeeName%2Cagency%2CdirCode%2CdivisionDirectorate%2CprogramElementCode'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400
