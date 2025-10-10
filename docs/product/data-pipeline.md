@@ -71,12 +71,12 @@ s3://govfunding-data/
 
 ## ETL Stages
 1. **Extract**
-   - `etl/nsf_awards_ingest.py`: call NSF API with incremental window, store response to `data/raw/` and S3.
-   - `etl/opportunities_ingest.py`: download XML, parse with `lxml`, save raw XML + intermediate JSON.
-   - Persist run metadata to `etl/run_state.json` for next-window computation.
+   - `apps/etl/nsf_awards_ingest.py`: call NSF API with incremental window, store response to `data/raw/` and S3.
+   - `apps/etl/opportunities_ingest.py`: download XML, parse with `lxml`, save raw XML + intermediate JSON.
+   - Persist run metadata to `apps/etl/run_state.json` for next-window computation.
 
 2. **Transform**
-   - Convert raw payloads to normalized dictionaries using Pydantic models (`etl/models.py`).
+   - Convert raw payloads to normalized dictionaries using Pydantic models (`apps/etl/models.py`).
    - Standardize dates, currency numeric types, dedupe contacts.
    - Generate derived fields: `deadline_status` (open/closing_soon/closed), `award_midpoint`.
    - Chunk opportunity descriptions via `RecursiveCharacterTextSplitter` with metadata.
@@ -93,11 +93,11 @@ s3://govfunding-data/
 
 ## Local Development
 - `.env` template stored in `config/.env.sample`.
-- Developer command: `poetry run python -m etl.pipeline --date 2025-04-05`.
+- Developer command: `poetry run python -m apps.etl.pipeline --date 2025-04-05`.
 - Use `docker-compose` (future) to run Postgres+Chroma locally.
 
 ## Next Steps
-1. Implement `etl/config.py` with settings management via `pydantic-settings`.
-2. Build `etl/nsf_awards_ingest.py` skeleton and fixture tests.
+1. Implement `apps/etl/config.py` with settings management via `pydantic-settings`.
+2. Build `apps/etl/nsf_awards_ingest.py` skeleton and fixture tests.
 3. Define Supabase schema migration scripts under `migrations/`.
 4. Draft GitHub Actions workflow and run-local script.

@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "NSF funding data ETL and RAG pipeline"
 authors = ["Hosung You <hosung@example.com>"]
 readme = "README.md"
+packages = [{ include = "apps" }]
 
 [tool.poetry.dependencies]
 python = "^3.10"
