@@ -1,5 +1,4 @@
 import { OpenAI } from 'openai'
-import { OpenAIStream, StreamingTextResponse } from 'ai'
 import { createClient } from '@supabase/supabase-js'
 
 // Initialize clients
@@ -99,7 +98,7 @@ export async function POST(req: Request) {
       .join('\n')
 
     // 4. Generate streaming response with GPT-4
-    const response = await openai.chat.completions.create({
+    const completion = await openai.chat.completions.create({
       model: 'gpt-4',
       stream: true,
       temperature: 0.7,
@@ -131,9 +130,32 @@ If the context is empty, politely inform the user that the database is being pop
       ],
     })
 
-    // 5. Stream the response back to the client
-    const stream = OpenAIStream(response)
-    return new StreamingTextResponse(stream)
+    // 5. Convert OpenAI stream to web-compatible stream
+    const stream = new ReadableStream({
+      async start(controller) {
+        const encoder = new TextEncoder()
+        try {
+          for await (const chunk of completion) {
+            const content = chunk.choices[0]?.delta?.content || ''
+            if (content) {
+              controller.enqueue(encoder.encode(content))
+            }
+          }
+        } catch (err) {
+          controller.error(err)
+        } finally {
+          controller.close()
+        }
+      },
+    })
+
+    return new Response(stream, {
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Cache-Control': 'no-cache, no-transform',
+        'X-Content-Type-Options': 'nosniff',
+      },
+    })
   } catch (error: any) {
     console.error('Chat API Error:', error)
     return new Response(
