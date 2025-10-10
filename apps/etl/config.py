@@ -32,6 +32,9 @@ class Settings(BaseSettings):
 
     # Database
     database_url: Optional[str] = Field(default=None, description="Postgres connection string")
+    supabase_service_key: Optional[str] = Field(
+        default=None, description="Supabase service role key for admin operations"
+    )
 
     # Vector store
     pinecone_api_key: Optional[str] = None

@@ -8,6 +8,7 @@ from datetime import datetime
 from typing import Any, Dict
 
 import httpx
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
 from ..config import Settings
 from ..utils.time import format_date
@@ -21,7 +22,23 @@ class NSFAwardsExtractor:
     def __init__(self, *, settings: Settings) -> None:
         self.settings = settings
 
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=2, max=10),
+        retry=retry_if_exception_type((httpx.HTTPError, httpx.TimeoutException)),
+        reraise=True,
+    )
     def fetch(self, *, window_start: datetime, window_end: datetime) -> Dict[str, Any]:
+        """
+        Fetch NSF awards with retry logic.
+
+        Args:
+            window_start: Start of date range
+            window_end: End of date range
+
+        Returns:
+            Raw API response payload
+        """
         params = {
             "dateStart": format_date(window_start),
             "dateEnd": format_date(window_end),
@@ -29,7 +46,7 @@ class NSFAwardsExtractor:
         }
         logger.info("Fetching NSF awards", extra=params)
 
-        response = httpx.get(str(self.settings.nsf_awards_api), params=params, timeout=30)
+        response = httpx.get(str(self.settings.nsf_awards_api), params=params, timeout=60)
         response.raise_for_status()
         payload = response.json()
         self._persist_raw(payload, window_start, window_end)
