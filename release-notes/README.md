@@ -7,22 +7,26 @@ This directory tracks published releases of the GovFunding Chatbot project. Each
 ```
 release-notes/
 ├── README.md           # Overview & navigation
-└── v1.0.0.md           # Initial architecture scaffolding release
+├── v1.0.0.md           # Initial architecture scaffolding release
+└── v1.1.0.md           # Repository restructure & documentation expansion
 ```
 
 ## 🚀 Current Version
 
-### [v1.0.0](v1.0.0.md) – Repository Bootstrap & Architecture Blueprint
+### [v1.1.0](v1.1.0.md) – Repository Restructure & Docs Expansion
 **Release Date**: October 10, 2025  
-**Type**: Major Release / Project Foundation
+**Type**: Minor Release / Developer Experience
 
 **Highlights**
-- Modular ETL skeleton for NSF awards & Grants.gov opportunities
-- Comprehensive product documentation (data pipeline, UI blueprint, research plan, roadmap)
-- Poetry-based dependency management and execution scripts
+- ETL code moved to `apps/etl/` with updated scripts and packaging
+- New architecture diagram, backlog tracker, and agent responsibilities
+- Updated README and project map reflecting upcoming services
 
-**Breaking Changes**: Yes – repository structure replaced with new architecture  
-**Migration Required**: Yes – follow the migration instructions in the release note
+**Breaking Changes**: Yes – module import path changed to `apps.etl`  
+**Migration Required**: Yes – update scripts and automations to new paths
+
+#### Previous Releases
+- [v1.0.0](v1.0.0.md) – Repository bootstrap & architecture blueprint (October 10, 2025)
 
 ---
 
