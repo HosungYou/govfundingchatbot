@@ -9,7 +9,7 @@ from typing import Iterable, List
 
 from lxml import etree
 
-from ..models import Opportunity
+from apps.etl.models import Opportunity
 
 logger = logging.getLogger(__name__)
 

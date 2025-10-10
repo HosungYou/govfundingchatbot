@@ -6,6 +6,6 @@ from datetime import datetime
 
 
 def format_date(value: datetime) -> str:
-    """Format datetime to NSF API date string (YYYY-MM-DD)."""
+    """Format datetime to NSF API date string (MM/DD/YYYY)."""
 
-    return value.strftime("%Y-%m-%d")
+    return value.strftime("%m/%d/%Y")

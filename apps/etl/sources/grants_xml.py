@@ -11,7 +11,7 @@ from pathlib import Path
 import httpx
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
-from ..config import Settings
+from apps.etl.config import Settings
 
 logger = logging.getLogger(__name__)
 

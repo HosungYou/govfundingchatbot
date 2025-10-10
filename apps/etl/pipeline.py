@@ -7,13 +7,13 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Optional
 
-from .config import Settings, get_settings
-from .sources.nsf_awards import NSFAwardsExtractor
-from .sources.grants_xml import GrantsXMLExtractor
-from .transformers.opportunities import OpportunityTransformer
-from .transformers.awards import AwardTransformer
-from .writers.local import LocalWriter
-from .writers.supabase import SupabaseWriter
+from apps.etl.config import Settings, get_settings
+from apps.etl.sources.nsf_awards import NSFAwardsExtractor
+from apps.etl.sources.grants_xml import GrantsXMLExtractor
+from apps.etl.transformers.opportunities import OpportunityTransformer
+from apps.etl.transformers.awards import AwardTransformer
+from apps.etl.writers.local import LocalWriter
+from apps.etl.writers.supabase import SupabaseWriter
 
 logger = logging.getLogger(__name__)
 

@@ -6,7 +6,7 @@ import logging
 from datetime import datetime
 from typing import Any, Dict, List
 
-from ..models import Award
+from apps.etl.models import Award
 
 logger = logging.getLogger(__name__)
 

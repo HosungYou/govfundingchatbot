@@ -10,8 +10,8 @@ from typing import Any, Dict
 import httpx
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
-from ..config import Settings
-from ..utils.time import format_date
+from apps.etl.config import Settings
+from apps.etl.utils.time import format_date
 
 logger = logging.getLogger(__name__)
 
@@ -42,11 +42,27 @@ class NSFAwardsExtractor:
         params = {
             "dateStart": format_date(window_start),
             "dateEnd": format_date(window_end),
-            "printFields": "id,title,piFirstName,piLastName,startDate,expDate,awardAmount,abstractText,awardeeName,agency,dirCode,divisionDirectorate,programElementCode",
+            "printFields": "id,title,piFirstName,piLastName,startDate,expDate,fundsObligatedAmt,abstractText,awardee,agency",
         }
         logger.info("Fetching NSF awards", extra=params)
 
-        response = httpx.get(str(self.settings.nsf_awards_api), params=params, timeout=60)
+        headers = {
+            "User-Agent": "GovFundingChatbot/1.0 (+https://github.com/HosungYou/govfundingchatbot)"
+        }
+        response = httpx.get(
+            str(self.settings.nsf_awards_api),
+            params=params,
+            headers=headers,
+            timeout=60,
+            follow_redirects=True
+        )
+
+        # Log response details for debugging
+        if response.status_code != 200:
+            logger.error(
+                f"NSF API returned {response.status_code}: {response.text[:500]}"
+            )
+
         response.raise_for_status()
         payload = response.json()
         self._persist_raw(payload, window_start, window_end)

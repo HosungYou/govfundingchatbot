@@ -9,8 +9,8 @@ from typing import Iterable, List
 
 from supabase import create_client, Client
 
-from ..config import Settings
-from ..models import Award, Opportunity
+from apps.etl.config import Settings
+from apps.etl.models import Award, Opportunity
 
 logger = logging.getLogger(__name__)
 

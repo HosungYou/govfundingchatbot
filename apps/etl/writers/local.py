@@ -7,8 +7,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Iterable
 
-from ..config import Settings
-from ..models import Award, Opportunity
+from apps.etl.config import Settings
+from apps.etl.models import Award, Opportunity
 
 
 class LocalWriter:
